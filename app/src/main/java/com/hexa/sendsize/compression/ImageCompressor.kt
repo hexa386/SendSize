@@ -90,23 +90,27 @@ import java.util.Locale
 import kotlin.math.sin
 
 suspend fun compressPhoto(context: Context, uri: Uri, targetMb: Float): File = withContext(Dispatchers.IO) {
-    val inputStream = context.contentResolver.openInputStream(uri) ?: throw Exception("Fail")
-    val original = BitmapFactory.decodeStream(inputStream)
-    inputStream.close()
+    val original = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+        BitmapFactory.decodeStream(inputStream)
+    } ?: throw Exception("Fail")
     val targetBytes = (targetMb * 1024 * 1024 * 0.9).toLong()
     var quality = 90
     var lastFile: File? = null
-    while (quality > 5) {
-        val out = ByteArrayOutputStream()
-        original.compress(Bitmap.CompressFormat.JPEG, quality, out)
-        if (out.size() <= targetBytes || quality <= 10) {
-            val f = File(context.cacheDir, "img_${System.currentTimeMillis()}.jpg")
-            FileOutputStream(f).use { it.write(out.toByteArray()) }
-            lastFile = f
-            break
+    try {
+        while (quality > 5) {
+            val out = ByteArrayOutputStream()
+            original.compress(Bitmap.CompressFormat.JPEG, quality, out)
+            if (out.size() <= targetBytes || quality <= 10) {
+                val f = File(context.cacheDir, "img_${System.currentTimeMillis()}.jpg")
+                FileOutputStream(f).use { it.write(out.toByteArray()) }
+                lastFile = f
+                break
+            }
+            quality -= 10
         }
-        quality -= 10
+        lastFile ?: throw Exception("Fail")
+    } finally {
+        original.recycle()
     }
-    lastFile ?: throw Exception("Fail")
 }
 

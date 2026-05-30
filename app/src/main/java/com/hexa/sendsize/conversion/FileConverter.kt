@@ -108,6 +108,8 @@ fun startConversion(
         else -> MimeTypes.AUDIO_AAC
     }
 
+    var isFinished = false
+    val handler = Handler(Looper.getMainLooper())
     val transformer = Transformer.Builder(context).apply {
         if (extractAudio) {
             setAudioMimeType(audioMimeType)
@@ -118,9 +120,11 @@ fun startConversion(
     }
     .addListener(object : Transformer.Listener {
         override fun onCompleted(composition: MediaComposition, exportResult: ExportResult) {
+            isFinished = true
             onComplete(outputFile)
         }
         override fun onError(composition: MediaComposition, exportResult: ExportResult, exception: ExportException) {
+            isFinished = true
             onError(exception.message ?: "Error")
         }
     })
@@ -131,25 +135,34 @@ fun startConversion(
         .setRemoveVideo(extractAudio)
         .build()
     
-    transformer.start(editedMediaItem, outputFile.absolutePath)
-    onLog("Transformer started: output=${outputFile.absolutePath}")
+    try {
+        transformer.start(editedMediaItem, outputFile.absolutePath)
+        onLog("Transformer started: output=${outputFile.absolutePath}")
+    } catch (e: Exception) {
+        isFinished = true
+        onLog("ERROR: Failed to start transformer: ${e.message}")
+        onError(e.message ?: "Could not start conversion")
+        return
+    }
     
-    val handler = Handler(Looper.getMainLooper())
     val holder = ProgressHolder()
-    handler.post(object : Runnable {
+    val progressRunnable = object : Runnable {
         override fun run() {
-            if (transformer.getProgress(holder) != Transformer.PROGRESS_STATE_NOT_STARTED) {
+            if (isFinished) return
+            val state = transformer.getProgress(holder)
+            if (state == Transformer.PROGRESS_STATE_AVAILABLE) {
                 onProgress(holder.progress / 100f)
-                handler.postDelayed(this, 500)
             }
+            handler.postDelayed(this, 500)
         }
-    })
+    }
+    handler.post(progressRunnable)
 }
 
 suspend fun convertImage(context: Context, uri: Uri, targetFormat: String): File = withContext(Dispatchers.IO) {
-    val inputStream = context.contentResolver.openInputStream(uri) ?: throw Exception("Fail")
-    val bitmap = BitmapFactory.decodeStream(inputStream)
-    inputStream.close()
+    val bitmap = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+        BitmapFactory.decodeStream(inputStream)
+    } ?: throw Exception("Fail")
     
     val format = when (targetFormat.uppercase()) {
         "JPEG", "JPG" -> Bitmap.CompressFormat.JPEG
@@ -160,8 +173,12 @@ suspend fun convertImage(context: Context, uri: Uri, targetFormat: String): File
     
     val ext = targetFormat.lowercase()
     val outputFile = File(context.cacheDir, "converted_${System.currentTimeMillis()}.$ext")
-    FileOutputStream(outputFile).use { out ->
-        bitmap.compress(format, 100, out)
+    try {
+        FileOutputStream(outputFile).use { out ->
+            bitmap.compress(format, 100, out)
+        }
+    } finally {
+        bitmap.recycle()
     }
     outputFile
 }

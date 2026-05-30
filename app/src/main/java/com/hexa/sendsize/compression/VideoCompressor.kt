@@ -213,10 +213,13 @@ fun startVideoCompression(
                 )
                 .build()
 
+            var isFinished = false
+            val handler = Handler(Looper.getMainLooper())
             val transformer = Transformer.Builder(context)
                 .setEncoderFactory(encoderFactory)
                 .addListener(object : Transformer.Listener {
                     override fun onCompleted(composition: MediaComposition, exportResult: ExportResult) {
+                        isFinished = true
                         val actualSize = outputFile.length()
                         android.util.Log.d("SendSize", "Pass $attempt complete. Actual size: $actualSize bytes")
                         onLog("Pass $attempt complete. Actual size: ${formatSize(actualSize)}")
@@ -250,6 +253,7 @@ fun startVideoCompression(
                         }
                     }
                     override fun onError(composition: MediaComposition, exportResult: ExportResult, exception: ExportException) {
+                        isFinished = true
                         android.util.Log.e("SendSize", "Transformer Error: ${exception.message}", exception)
                         onLog("ERROR: Transformer Error: ${exception.message}")
                         onError("Encoding error: ${exception.message}", null)
@@ -273,23 +277,22 @@ fun startVideoCompression(
                 android.util.Log.d("SendSize", "Transformer started successfully")
                 onLog("Transformer started successfully")
             } catch (e: Exception) {
+                isFinished = true
                 android.util.Log.e("SendSize", "Failed to start transformer", e)
                 onLog("ERROR: Failed to start transformer: ${e.message}")
                 onError("Could not start compression: ${e.message}", null)
                 return
             }
 
-            val handler = Handler(Looper.getMainLooper())
             val holder = ProgressHolder()
             val progressRunnable = object : Runnable {
                 override fun run() {
+                    if (isFinished) return
                     val state = transformer.getProgress(holder)
                     if (state == Transformer.PROGRESS_STATE_AVAILABLE) {
                         onProgress(holder.progress / 100f)
                     }
-                    if (state != Transformer.PROGRESS_STATE_NOT_STARTED) {
-                        handler.postDelayed(this, 500)
-                    }
+                    handler.postDelayed(this, 500)
                 }
             }
             handler.post(progressRunnable)

@@ -137,19 +137,27 @@ fun VideoCompressorTab(
     fun updateFileInfo(uris: List<Uri>) {
         if (uris.isNotEmpty()) {
             val uri = uris[0]
-            val retriever = MediaMetadataRetriever()
-            try {
-                retriever.setDataSource(context, uri)
-                fileName = getFileName(context, uri)
-                originalSizeBytes = getFileSize(context, uri)
-                fileFormat = context.contentResolver.getType(uri)?.split("/")?.lastOrNull()?.uppercase() ?: "???"
-                val dur = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
-                durationS = String.format(Locale.getDefault(), "%d:%02d", dur / 1000 / 60, (dur / 1000) % 60)
-            } catch (e: Exception) {
-                android.util.Log.e("SendSize", "Error getting file info", e)
-                fileName = "Unknown"
-            } finally {
-                retriever.release()
+            scope.launch(Dispatchers.IO) {
+                val retriever = MediaMetadataRetriever()
+                try {
+                    retriever.setDataSource(context, uri)
+                    val loadedName = getFileName(context, uri)
+                    val loadedSize = getFileSize(context, uri)
+                    val loadedFormat = context.contentResolver.getType(uri)?.split("/")?.lastOrNull()?.uppercase() ?: "???"
+                    val dur = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0L
+                    val loadedDuration = String.format(Locale.getDefault(), "%d:%02d", dur / 1000 / 60, (dur / 1000) % 60)
+                    withContext(Dispatchers.Main) {
+                        fileName = loadedName
+                        originalSizeBytes = loadedSize
+                        fileFormat = loadedFormat
+                        durationS = loadedDuration
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("SendSize", "Error getting file info", e)
+                    withContext(Dispatchers.Main) { fileName = "Unknown" }
+                } finally {
+                    retriever.release()
+                }
             }
         }
     }
@@ -526,6 +534,12 @@ fun ProcessingScreen(
     technicalLogs: String? = null,
     onCancel: () -> Unit
 ) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress.coerceIn(0f, 1f),
+        animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
+        label = "processingProgress"
+    )
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -545,7 +559,7 @@ fun ProcessingScreen(
             )
             
             LinearProgressIndicator(
-                progress = { progress },
+                progress = { animatedProgress },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(12.dp)
@@ -559,7 +573,7 @@ fun ProcessingScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(status, style = MaterialTheme.typography.bodyMedium)
-                Text("${(progress * 100).toInt()}%", fontWeight = FontWeight.Bold)
+                Text("${(animatedProgress * 100).toInt()}%", fontWeight = FontWeight.Bold)
             }
             
             technicalLogs?.let { logs ->
@@ -874,10 +888,14 @@ fun PhotoCompressorTab(autoSave: Boolean, saveUri: String?, vibrations: Boolean,
                                 withContext(Dispatchers.Main) {
                                     isProcessing = false
                                     results = res
-                                    showCompletionNotification(context, if (res.size > 1) "batch photo" else res[0].name)
-                                    resultFiles = res
-                                    resultOriginalSizes = originalSizes
-                                    showResultScreen = true
+                                    if (res.isNotEmpty()) {
+                                        showCompletionNotification(context, if (res.size > 1) "batch photo" else res[0].name)
+                                        resultFiles = res
+                                        resultOriginalSizes = originalSizes
+                                        showResultScreen = true
+                                    } else {
+                                        Toast.makeText(context, "Photo compression failed", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                             }
                         }

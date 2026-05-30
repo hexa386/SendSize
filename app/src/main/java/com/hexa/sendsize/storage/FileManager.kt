@@ -100,22 +100,30 @@ fun getFileName(context: Context, uri: Uri): String {
 
 
 fun shareFile(context: Context, file: File) {
-    val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "*/*"
-        putExtra(Intent.EXTRA_STREAM, uri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    try {
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "*/*"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(intent, "Share File"))
+    } catch (e: Exception) {
+        Toast.makeText(context, "Unable to share file", Toast.LENGTH_SHORT).show()
     }
-    context.startActivity(Intent.createChooser(intent, "Share File"))
 }
 
 fun openFile(context: Context, file: File) {
-    val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
-    val intent = Intent(Intent.ACTION_VIEW).apply {
-        setDataAndType(uri, context.contentResolver.getType(uri) ?: "*/*")
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    try {
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, context.contentResolver.getType(uri) ?: "*/*")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        Toast.makeText(context, "No app can open this file", Toast.LENGTH_SHORT).show()
     }
-    context.startActivity(intent)
 }
 
 
@@ -123,7 +131,9 @@ fun openFile(context: Context, file: File) {
 
 fun saveFileToUri(context: Context, source: File, destination: Uri) {
     try {
-        context.contentResolver.openOutputStream(destination)?.use { source.inputStream().copyTo(it) }
+        context.contentResolver.openOutputStream(destination)?.use { out ->
+            source.inputStream().use { input -> input.copyTo(out) }
+        } ?: throw IOException("Could not open destination")
         Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT).show()
     } catch (e: Exception) { Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show() }
 }
@@ -132,7 +142,11 @@ fun autoSaveToFile(context: Context, source: File, treeUri: String, fileName: St
     try {
         val root = DocumentFile.fromTreeUri(context, Uri.parse(treeUri))
         val file = root?.createFile(mimeType, fileName)
-        file?.uri?.let { context.contentResolver.openOutputStream(it)?.use { out -> source.inputStream().copyTo(out) } }
+        file?.uri?.let {
+            context.contentResolver.openOutputStream(it)?.use { out ->
+                source.inputStream().use { input -> input.copyTo(out) }
+            }
+        }
     } catch (_: Exception) {}
 }
 

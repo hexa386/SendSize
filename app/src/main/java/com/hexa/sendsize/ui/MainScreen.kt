@@ -91,17 +91,6 @@ import kotlin.math.sin
 
 @Composable
 fun AnimatedAmbientBackground() {
-    val infiniteTransition = rememberInfiniteTransition(label = "ambient")
-    val phase by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 2f * Math.PI.toFloat(),
-        animationSpec = infiniteRepeatable(
-            animation = tween(15000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "phase"
-    )
-
     val color1 = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
     val color2 = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.15f)
     val color3 = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.1f)
@@ -111,12 +100,10 @@ fun AnimatedAmbientBackground() {
     Canvas(modifier = Modifier.fillMaxSize()) {
         val width = size.width
         val height = size.height
-        
-        val x1 = width * (0.5f + 0.2f * sin(phase.toDouble()).toFloat())
-        val y1 = height * (0.5f + 0.2f * sin(phase.toDouble() + 1.0).toFloat())
-        
-        val x2 = width * (0.5f + 0.2f * sin(phase.toDouble() + 2.0).toFloat())
-        val y2 = height * (0.5f + 0.2f * sin(phase.toDouble() + 3.0).toFloat())
+        val x1 = width * 0.42f
+        val y1 = height * 0.36f
+        val x2 = width * 0.64f
+        val y2 = height * 0.58f
 
         drawRect(color = bgColor)
         
@@ -227,7 +214,7 @@ fun MainScreen() {
                             "SendSize",
                             style = MaterialTheme.typography.headlineMedium.copy(
                                 fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = (-0.5).sp
+                                letterSpacing = 0.sp
                             )
                         )
                     },
@@ -269,8 +256,8 @@ fun MainScreen() {
                     AnimatedContent(
                         targetState = if (showHistory) -1 else selectedTab,
                         transitionSpec = {
-                            val slideSpec = spring<IntOffset>(stiffness = Spring.StiffnessLow)
-                            val fadeSpec = spring<Float>(stiffness = Spring.StiffnessLow)
+                            val slideSpec = tween<IntOffset>(durationMillis = 260, easing = FastOutSlowInEasing)
+                            val fadeSpec = tween<Float>(durationMillis = 180, easing = FastOutSlowInEasing)
                             slideInHorizontally(slideSpec) { if (targetState > initialState) it else -it } + fadeIn(fadeSpec) togetherWith
                                     slideOutHorizontally(slideSpec) { if (targetState > initialState) -it else it } + fadeOut(fadeSpec)
                         },

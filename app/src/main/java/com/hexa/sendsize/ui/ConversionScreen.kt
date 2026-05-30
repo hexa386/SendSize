@@ -117,6 +117,11 @@ fun ConvertTab(autoSave: Boolean, saveUri: String?, vibrations: Boolean, initial
     var showResultScreen by remember { mutableStateOf(false) }
     var originalFormat by remember { mutableStateOf("") }
     var technicalLogs by remember { mutableStateOf("") }
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress.coerceIn(0f, 1f),
+        animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
+        label = "conversionProgress"
+    )
 
     LaunchedEffect(selectedUri) {
         selectedUri?.let { uri ->
@@ -210,29 +215,35 @@ fun ConvertTab(autoSave: Boolean, saveUri: String?, vibrations: Boolean, initial
                     else -> audioFormats
                 }
                 
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    currentFormats.forEach { format ->
-                        FilterChip(
-                            modifier = Modifier.padding(4.dp),
-                            selected = selectedFormat == format,
-                            onClick = { selectedFormat = format },
-                            label = { Text(format, modifier = Modifier.widthIn(min = 48.dp), textAlign = TextAlign.Center) }
-                        )
+                AnimatedContent(
+                    targetState = currentFormats,
+                    transitionSpec = { fadeIn(tween(140)) togetherWith fadeOut(tween(100)) },
+                    label = "formatOptions"
+                ) { formats ->
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        formats.forEach { format ->
+                            FilterChip(
+                                modifier = Modifier.padding(4.dp),
+                                selected = selectedFormat == format,
+                                onClick = { selectedFormat = format },
+                                label = { Text(format, modifier = Modifier.widthIn(min = 48.dp), textAlign = TextAlign.Center) }
+                            )
+                        }
                     }
                 }
 
                 if (isProcessing) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         LinearProgressIndicator(
-                            progress = { progress },
+                            progress = { animatedProgress },
                             modifier = Modifier.fillMaxWidth().height(12.dp).clip(CircleShape),
                             color = MaterialTheme.colorScheme.primary,
                             trackColor = MaterialTheme.colorScheme.surfaceVariant
                         )
-                        Text("${(progress * 100).toInt()}%", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text("${(animatedProgress * 100).toInt()}%", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         Text("Converting...", style = MaterialTheme.typography.bodyMedium)
                         
                         if (technicalLogsEnabled) {

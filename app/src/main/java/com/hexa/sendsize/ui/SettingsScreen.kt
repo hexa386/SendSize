@@ -112,7 +112,13 @@ fun SettingsTab(
     var showAbout by remember { mutableStateOf(false) }
 
     if (showAbout) {
-        AboutPage(totalFiles, totalBytesSaved) { showAbout = false }
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(tween(180)) + slideInHorizontally(tween(220)) { it / 4 },
+            exit = fadeOut(tween(120))
+        ) {
+            AboutPage(totalFiles, totalBytesSaved) { showAbout = false }
+        }
     } else {
         Column(modifier = Modifier.padding(24.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text("System Settings", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -206,6 +212,8 @@ fun SettingsTab(
 
 @Composable
 fun AboutPage(totalFiles: Int, totalBytesSaved: Long, onBack: () -> Unit) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -229,8 +237,24 @@ fun AboutPage(totalFiles: Int, totalBytesSaved: Long, onBack: () -> Unit) {
             tint = MaterialTheme.colorScheme.primary)
 
         Text("SendSize", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Black)
-        Text("Version 1.0.0", style = MaterialTheme.typography.bodyMedium)
-        Text("Created by Hexa", style = MaterialTheme.typography.bodySmall)
+        Text("Version 1.1", style = MaterialTheme.typography.bodyMedium)
+        Text("GNU GPL v3", style = MaterialTheme.typography.bodySmall)
+
+        OutlinedButton(
+            onClick = {
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hexa386/SendSize/"))
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Unable to open repository", Toast.LENGTH_SHORT).show()
+                }
+            },
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Icon(Icons.Rounded.Code, null)
+            Spacer(Modifier.width(8.dp))
+            Text("GitHub Repository")
+        }
 
         Spacer(Modifier.height(16.dp))
 
