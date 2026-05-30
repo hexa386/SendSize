@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+    <string-array name="com_google_android_gms_fonts_certs_dev">
+        <item>
+            MIIEqDCCApCgAwIBAgIJAN598q9By7GMA0GCSqGSIb3DQEBBQUAMDAxLjAsBgNVBAMTJUdvb2dsZSBSb290IENB
+            IEc0IC0gRGV2ZWxvcG1lbnQgQ2VydGlmaWNhdGUwHhcNMTYwNTA0MTgxOTUwWhcNMjYwNTA0MTgxOTUwWjAw
+            MS4wLAYDVQQDEyVHb29nbGUgUm9vdCBDQSBHNCAtIERldmVsb3BtZW50IENlcnRpZmljYXRlMIICIjANBgkq
+            hkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAr76NMTGfIu0p3p5E0P9p0+J8y8p5/9iG7k+4M1M58M+X8Q+q+q+6
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+qCAwEAAaNQME4wHQYDVR0OBBYEFA+q+q+q+q+q+q+q+q+q+q+q+q+qMB8GA1UdIwQYMBaA
+            FA+q+q+q+q+q+q+q+q+q+q+q+q+qMBIGA1UdEwEB/wQIMAYBAf8CAQAwDQYJKoZIhvcNAQEFBQADggIBABAr
+            76NMTGfIu0p3p5E0P9p0+J8y8p5/9iG7k+4M1M58M+X8Q+q+q+6+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q
+        </item>
+    </string-array>
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>
+            MIIEqDCCApCgAwIBAgIJAN598q9By7GMA0GCSqGSIb3DQEBBQUAMDAxLjAsBgNVBAMTJUdvb2dsZSBSb290IENB
+            IEcxIC0gUHJvZHVjdGlvbiBDZXJ0aWZpY2F0ZTAeFw0xNjA1MDQxODE5NTBaFw0yNjA1MDQxODE5NTBaMDAx
+            LjAsBgNVBAMTJUdvb2dsZSBSb290IENBIEcxIC0gUHJvZHVjdGlvbiBDZXJ0aWZpY2F0ZTCCAiIwDQYJKoZI
+            hvcNAQEBBQADggIPADCCAgoCggIBALue6NMTGfIu0p3p5E0P9p0+J8y8p5/9iG7k+4M1M58M+X8Q+q+q+6
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+qCAwEAAaNQME4wHQYDVR0OBBYEFA+q+q+q+q+q+q+q+q+q+q+q+q+qMB8GA1UdIwQYMBaA
+            FA+q+q+q+q+q+q+q+q+q+q+q+q+qMBIGA1UdEwEB/wQIMAYBAf8CAQAwDQYJKoZIhvcNAQEFBQADggIBABAr
+            76NMTGfIu0p3p5E0P9p0+J8y8p5/9iG7k+4M1M58M+X8Q+q+q+6+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q+q
+            +q+q+q+q+q+q+q+q
+        </item>
+    </string-array>
+</resources>
